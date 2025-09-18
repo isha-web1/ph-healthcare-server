@@ -3,7 +3,7 @@ import { IPaginationOptions } from "../../interfaces/pagination";
 import { adminSearchAbleFields } from "./admin.constant";
 import { IAdminFilterRequest } from "./admin.interface";
 import prisma from "../../../shared/prisma";
-import { Prisma } from "../../../../generated/prisma";
+import { Admin, Prisma } from "../../../../generated/prisma";
 
 
 
@@ -67,6 +67,32 @@ const getAllFromDb = async (params: IAdminFilterRequest, options: IPaginationOpt
     };
 };
 
+
+const getByIdFromDb = async (id : string) => {
+    const result = await prisma.admin.findUnique({
+        where: {
+            id: id
+        }
+    })
+       
+return result;
+}
+
+
+const updateIntoDb = async (id : string, data : Partial<Admin>) => {
+
+    const result = await prisma.admin.update({
+        where: {
+            id: id
+        },
+        data: data
+    })
+
+    return result;
+}
+
 export const adminService = {
   getAllFromDb,
+    getByIdFromDb,
+    updateIntoDb
 };

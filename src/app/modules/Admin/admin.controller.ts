@@ -18,11 +18,53 @@ const getAllFromDb = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch admin data",
-      error: err?.message,
+      error: err,
     });
   }
 };
 
+
+const getByIdFromDb = async (req: Request, res: Response) =>{
+  const { id } = req.params;
+  try{
+    const result = await adminService.getByIdFromDb(id)
+    res.status(200).json({
+      success: true,
+      message: "single Admin Data Fetched Successfully",
+      data: result,
+    });
+  }
+  catch(err){
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch admin data",
+      error: err,
+    });
+  }
+}
+
+
+
+const updateIntoDb = async (req: Request, res: Response) =>{
+  const { id } = req.params;
+  try{
+    const result = await adminService.updateIntoDb( id, req.body)
+    res.status(200).json({
+      success: true,
+      message: " Admin Data updated Successfully",
+      data: result,
+    });
+  }
+  catch(err){
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch admin data",
+      error: err,
+    });
+  }
+}
 export const adminController = {
   getAllFromDb,
+  getByIdFromDb,
+  updateIntoDb
 };
