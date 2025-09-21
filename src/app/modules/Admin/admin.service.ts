@@ -3,7 +3,7 @@ import { IPaginationOptions } from "../../interfaces/pagination";
 import { adminSearchAbleFields } from "./admin.constant";
 import { IAdminFilterRequest } from "./admin.interface";
 import prisma from "../../../shared/prisma";
-import { Admin, Prisma } from "../../../../generated/prisma";
+import { Admin, Prisma, UserStatus } from "../../../../generated/prisma";
 
 
 
@@ -68,7 +68,7 @@ const getAllFromDb = async (params: IAdminFilterRequest, options: IPaginationOpt
 };
 
 
-const getByIdFromDb = async (id : string) => {
+const getByIdFromDb = async (id : string) : Promise<Admin | null> => {
     const result = await prisma.admin.findUnique({
         where: {
             id: id
@@ -81,6 +81,13 @@ return result;
 
 const updateIntoDb = async (id : string, data : Partial<Admin>) => {
 
+    await prisma.admin.findFirstOrThrow({
+        where: {
+            id: id,
+            isDeleted: false
+        }
+    })
+
     const result = await prisma.admin.update({
         where: {
             id: id
@@ -91,8 +98,76 @@ const updateIntoDb = async (id : string, data : Partial<Admin>) => {
     return result;
 }
 
+
+
+const deleteFromDb = async (id : string) : Promise<Admin | null> =>{
+
+       await prisma.admin.findUniqueOrThrow({
+        where: {
+            id
+        }
+    });
+
+
+  const result = await prisma.$transaction(async(transactionClient) => {
+    const adminDeletedData = await transactionClient.admin.delete({
+        where : {
+            id : id
+        }
+    })
+
+     await transactionClient.user.delete({
+        where : {
+            email : adminDeletedData.email
+        }
+    })
+
+    return adminDeletedData;
+  }) 
+  
+    return result;
+}
+
+
+const softDeleteFromDb = async (id : string) : Promise<Admin | null> =>{
+
+       await prisma.admin.findUniqueOrThrow({
+        where: {
+            id,
+            isDeleted: false
+        }
+    });
+
+
+  const result = await prisma.$transaction(async(transactionClient) => {
+    const adminDeletedData = await transactionClient.admin.update({
+        where : {
+            id : id
+        },
+        data : {
+            isDeleted : true
+        }
+    })
+
+    await transactionClient.user.update({
+        where : {
+            email : adminDeletedData.email
+        },
+        data : {
+            status : UserStatus.DELETED
+        }
+    })
+
+    return adminDeletedData;
+  }) 
+  
+    return result;
+}
+
 export const adminService = {
   getAllFromDb,
     getByIdFromDb,
-    updateIntoDb
+    updateIntoDb,
+    deleteFromDb,
+    softDeleteFromDb
 };
