@@ -2,8 +2,9 @@ import express,{Request, Response} from 'express'
 import { userService } from './user.service'
 import sendResponse from '../../../shared/sendResponse'
 import httpStatus from 'http-status'
+import catchAsync from '../../../shared/catchAsync'
 
-const createAdmin = async (req : Request, res : Response) => {
+const createAdmin = catchAsync( async (req : Request, res : Response) => {
     
          const result = await userService.createAdmin(req.body)
         sendResponse(res, {
@@ -13,7 +14,7 @@ const createAdmin = async (req : Request, res : Response) => {
         data: result
     })
        
-}
+})
 
 
 export const userController = {

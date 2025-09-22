@@ -1,11 +1,12 @@
-import { Request, Response } from "express";
+import { Request, RequestHandler, Response } from "express";
 import { adminService } from "./admin.service";
 import pick from "../../../shared/pick";
 import { adminFilterableFields } from "./admin.constant";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
+import catchAsync from "../../../shared/catchAsync";
 
-const getAllFromDb = async (req: Request, res: Response) => {
+const getAllFromDb : RequestHandler = catchAsync (async (req: Request, res: Response) => {
   
    const filters = pick(req.query, adminFilterableFields);
     const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder'])
@@ -19,10 +20,10 @@ const getAllFromDb = async (req: Request, res: Response) => {
         meta: result.meta,
         data: result.data
     })
-}
+})
 
 
-const getByIdFromDb = async (req: Request, res: Response) =>{
+const getByIdFromDb = catchAsync (async (req: Request, res: Response) =>{
   const { id } = req.params;
   
     const result = await adminService.getByIdFromDb(id)
@@ -34,11 +35,11 @@ const getByIdFromDb = async (req: Request, res: Response) =>{
     });
   
  
-}
+})
 
 
 
-const updateIntoDb = async (req: Request, res: Response) =>{
+const updateIntoDb = catchAsync (async (req: Request, res: Response) =>{
   const { id } = req.params;
   
     const result = await adminService.updateIntoDb( id, req.body)
@@ -50,11 +51,11 @@ const updateIntoDb = async (req: Request, res: Response) =>{
     })
   
  
-}
+})
 
 
 
-const deleteFromDb = async (req: Request, res: Response) =>{
+const deleteFromDb = catchAsync( async (req: Request, res: Response) =>{
   const { id } = req.params;
   
     const result = await adminService.deleteFromDb(id )
@@ -65,10 +66,10 @@ const deleteFromDb = async (req: Request, res: Response) =>{
         data: result
     })
   
-}
+})
 
 
-const softDeleteFromDb = async (req: Request, res: Response) =>{
+const softDeleteFromDb = catchAsync( async (req: Request, res: Response) =>{
   const { id } = req.params;
   
     const result = await adminService.deleteFromDb(id)
@@ -80,7 +81,7 @@ const softDeleteFromDb = async (req: Request, res: Response) =>{
     })
 
   
-}
+})
 export const adminController = {
   getAllFromDb,
   getByIdFromDb,
