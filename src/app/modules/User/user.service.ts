@@ -1,34 +1,50 @@
-import { PrismaClient, UserRole } from "../../../../generated/prisma"
+import { Admin, PrismaClient, UserRole } from "../../../../generated/prisma"
 import * as bcrypt from 'bcrypt'
+import { IFile } from "../../interfaces/file";
+import { fileUploader } from "../../../helpers/fileUploader";
+import prisma from "../../../shared/prisma";
+import { Request } from "express";
 
-const prisma = new PrismaClient()
 
-const createAdmin = async (data : any) => {
 
-    const hashedPassword : string = await bcrypt.hash(data.password, 12) as unknown as string
-   
-    
+
+
+const createAdmin = async (req: Request): Promise<Admin> => {
+    if (!req.body) {
+        throw new Error("Request body is missing");
+    }
+
+    const file = req.file as IFile;
+
+    if (file) {
+        const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
+        req.body.admin.profilePhoto = uploadToCloudinary?.secure_url;
+    }
+
+    const hashedPassword: string = await bcrypt.hash(req.body.password, 12);
+
     const userData = {
-        email : data.admin.email,
-        password : hashedPassword,
-        role : UserRole.ADMIN
-     }
+        email: req.body.admin.email,
+        password: hashedPassword,
+        role: UserRole.ADMIN
+    };
 
-     const result = await prisma.$transaction(async(transactionClient) => {
+    const result = await prisma.$transaction(async (transactionClient) => {
         await transactionClient.user.create({
-            data : userData
-        })
+            data: userData
+        });
 
         const createdAdminData = await transactionClient.admin.create({
-            data : data.admin
-        })
+            data: req.body.admin
+        });
 
-        return createdAdminData
-     })
+        return createdAdminData;
+    });
+
     return result;
-}
-
+};
 
 export const userService = {
     createAdmin
 }
+
