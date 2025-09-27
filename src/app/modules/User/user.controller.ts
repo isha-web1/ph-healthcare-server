@@ -58,9 +58,28 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
 });
 
 
+
+const changeProfileStatus = catchAsync(async (req: Request, res: Response) => {
+
+    const { id } = req.params;
+    if (!id) {
+        throw new Error("User id is required in params");
+    }
+    const result = await userService.changeProfileStatus(id, req.body)
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Users profile status changed!",
+        data: result
+    })
+});
+
+
 export const userController = {
     createAdmin,
     createDoctor,
     createPatient,
-    getAllFromDB
+    getAllFromDB,
+    changeProfileStatus
 }
