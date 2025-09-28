@@ -1,4 +1,4 @@
-import { Admin, Doctor, Patient, Prisma, PrismaClient, UserRole } from "../../../../generated/prisma"
+import { Admin, Doctor, Patient, Prisma, PrismaClient, UserRole, UserStatus } from "../../../../generated/prisma"
 import * as bcrypt from 'bcrypt'
 import { IFile } from "../../interfaces/file";
 import { fileUploader } from "../../../helpers/fileUploader";
@@ -7,6 +7,7 @@ import { Request } from "express";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 import { userSearchAbleFields } from "./user.constant";
+import { IAuthUser } from "../../interfaces/common";
 
 
 
@@ -199,11 +200,65 @@ const changeProfileStatus = async (id: string, status: UserRole) => {
 
     return updateUserStatus;
 };
+
+
+const getMyProfile = async (user: IAuthUser) => {
+
+    const userInfo = await prisma.user.findUniqueOrThrow({
+        where: {
+            email: user?.email,
+            status: UserStatus.ACTIVE
+        },
+        select: {
+            id: true,
+            email: true,
+            needPasswordChange: true,
+            role: true,
+            status: true
+        }
+    });
+
+    let profileInfo;
+
+    if (userInfo.role === UserRole.SUPER_ADMIN) {
+        profileInfo = await prisma.admin.findUnique({
+            where: {
+                email: userInfo.email
+            }
+        })
+    }
+    else if (userInfo.role === UserRole.ADMIN) {
+        profileInfo = await prisma.admin.findUnique({
+            where: {
+                email: userInfo.email
+            }
+        })
+    }
+    else if (userInfo.role === UserRole.DOCTOR) {
+        profileInfo = await prisma.doctor.findUnique({
+            where: {
+                email: userInfo.email
+            }
+        })
+    }
+    else if (userInfo.role === UserRole.PATIENT) {
+        profileInfo = await prisma.patient.findUnique({
+            where: {
+                email: userInfo.email
+            }
+        })
+    }
+
+    return { ...userInfo, ...profileInfo };
+};
+
+
 export const userService = {
     createAdmin,
     createDoctor,
     createPatient,
     getAllFromDB,
-    changeProfileStatus
+    changeProfileStatus,
+    getMyProfile
 }
 
