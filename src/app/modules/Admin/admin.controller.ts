@@ -25,6 +25,10 @@ const getAllFromDb : RequestHandler = catchAsync (async (req: Request, res: Resp
 
 const getByIdFromDb = catchAsync (async (req: Request, res: Response) =>{
   const { id } = req.params;
+
+  if (!id) {
+        throw new Error("Specialty id is required in params");
+    }
   
     const result = await adminService.getByIdFromDb(id)
     sendResponse(res, {
@@ -41,6 +45,10 @@ const getByIdFromDb = catchAsync (async (req: Request, res: Response) =>{
 
 const updateIntoDb = catchAsync (async (req: Request, res: Response) =>{
   const { id } = req.params;
+
+  if (!id) {
+        throw new Error("Specialty id is required in params");
+    }
   
     const result = await adminService.updateIntoDb( id, req.body)
    sendResponse(res, {
@@ -57,6 +65,10 @@ const updateIntoDb = catchAsync (async (req: Request, res: Response) =>{
 
 const deleteFromDb = catchAsync( async (req: Request, res: Response) =>{
   const { id } = req.params;
+
+  if (!id) {
+        throw new Error("Specialty id is required in params");
+    }
   
     const result = await adminService.deleteFromDb(id )
     sendResponse(res, {
@@ -71,6 +83,10 @@ const deleteFromDb = catchAsync( async (req: Request, res: Response) =>{
 
 const softDeleteFromDb = catchAsync( async (req: Request, res: Response) =>{
   const { id } = req.params;
+
+  if (!id) {
+        throw new Error("Specialty id is required in params");
+    }
   
     const result = await adminService.deleteFromDb(id)
      sendResponse(res, {

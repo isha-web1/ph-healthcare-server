@@ -29,7 +29,19 @@ const getAllFromDB = async (): Promise<Specialties[]> => {
 }
 
 
+
+const deleteFromDB = async (id: string): Promise<Specialties> => {
+    const result = await prisma.specialties.delete({
+        where: {
+            id,
+        },
+    });
+    return result;
+};
+
+
 export const SpecialtiesService = {
     insertIntoDB,
-    getAllFromDB
+    getAllFromDB,
+    deleteFromDB
 }

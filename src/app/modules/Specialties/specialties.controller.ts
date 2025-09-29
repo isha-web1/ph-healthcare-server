@@ -32,7 +32,27 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
 
 
 
+const deleteFromDB = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    if (!id) {
+        throw new Error("Specialty id is required in params");
+    }
+
+    const result = await SpecialtiesService.deleteFromDB(id);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Specialty deleted successfully',
+        data: result,
+    });
+});
+
+
+
+
 export const SpecialtiesController = {
     insertIntoDB,
-    getAllFromDB
+    getAllFromDB,
+    deleteFromDB
 }
