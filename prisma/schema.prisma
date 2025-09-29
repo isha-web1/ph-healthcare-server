@@ -28,6 +28,7 @@ model User {
   doctor Doctor?
   patient Patient?
 
+
   @@map("users")
 
 }
@@ -69,6 +70,7 @@ model Doctor {
   updatedAt           DateTime            @updatedAt
   user                User                @relation(fields: [email], references: [email])
    doctorSpecialties   DoctorSpecialties[]
+  review              Review[]
 
   @@map("doctors")
 }
@@ -87,6 +89,7 @@ model Patient {
   updatedAt     DateTime @updatedAt
 
   user              User               @relation(references: [email], fields: [email])
+  review            Review[]
   
 
   @@map("patients")
@@ -112,6 +115,27 @@ model DoctorSpecialties {
 
   @@id([specialtiesId, doctorId])
   @@map("doctor_specialties")
+}
+
+
+
+model Review {
+  id        String  @id @default(uuid())
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id])
+
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+
+  appointmentId String      @unique
+ 
+
+  rating    Float
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("reviews")
 }
 
 
