@@ -1,8 +1,8 @@
 type IOptions = {
     page?: number,
     limit?: number,
-    sortOrder?: 'asc' | 'desc',
-    sortBy?: string
+    sortOrder?: 'asc' | 'desc' | undefined,
+    sortBy?: string | undefined
 }
 
 type IOptionsResult = {
