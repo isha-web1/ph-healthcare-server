@@ -1,0 +1,38 @@
+import catchAsync from "../../../shared/catchAsync";
+import { Request, Response } from "express";
+import { SpecialtiesService } from "./specialties.service";
+import sendResponse from "../../../shared/sendResponse";
+import httpStatus from "http-status";
+
+
+
+const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
+    console.log(req.body)
+    const result = await SpecialtiesService.insertIntoDB(req);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Specialties created successfully!",
+        data: result
+    });
+});
+
+
+const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
+    const result = await SpecialtiesService.getAllFromDB();
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Specialties data fetched successfully',
+        data: result,
+    });
+});
+
+
+
+
+export const SpecialtiesController = {
+    insertIntoDB,
+    getAllFromDB
+}
