@@ -1,4 +1,4 @@
-import { Patient, Prisma } from "../../../../generated/prisma";
+import { Patient, Prisma, UserStatus } from "../../../../generated/prisma";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 import prisma from "../../../shared/prisma";
 import { IPaginationOptions } from "../../interfaces/pagination";
@@ -95,7 +95,67 @@ const getByIdFromDB = async (id: string): Promise<Patient | null> => {
 
 
 
+const deleteFromDB = async (id: string): Promise<Patient | null> => {
+  const result = await prisma.$transaction(async (tx) => {
+    // delete medical report
+    await tx.medicalReport.deleteMany({
+      where: {
+        patientId: id
+      }
+    });
+
+    // delete patient health data
+    await tx.patientHealthData.delete({
+      where: {
+        patientId: id
+      }
+    });
+
+    const deletedPatient = await tx.patient.delete({
+      where: {
+        id
+      }
+    });
+
+    await tx.user.delete({
+      where: {
+        email: deletedPatient.email
+      }
+    });
+
+    return deletedPatient;
+  });
+
+  return result;
+};
+
+const softDelete = async (id: string): Promise<Patient | null> => {
+  return await prisma.$transaction(async transactionClient => {
+    const deletedPatient = await transactionClient.patient.update({
+      where: { id },
+      data: {
+        isDeleted: true,
+      },
+    });
+
+    await transactionClient.user.update({
+      where: {
+        email: deletedPatient.email,
+      },
+      data: {
+        status: UserStatus.DELETED,
+      },
+    });
+
+    return deletedPatient;
+  });
+};
+
+
+
 export const PatientService = {
   getAllFromDB,
     getByIdFromDB,
+    deleteFromDB,
+    softDelete
 };
