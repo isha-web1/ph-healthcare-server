@@ -44,6 +44,20 @@ const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
 });
 
 
+const updateIntoDB = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+    if (!id) {
+        throw new Error("Patient id is required in params");
+    }
+  const result = await PatientService.updateIntoDB(id, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Patient updated successfully',
+    data: result,
+  });
+});
 
 
 
@@ -83,5 +97,6 @@ export const PatientController = {
   getAllFromDB,
     getByIdFromDB,
     deleteFromDB,
-    softDelete
+    softDelete,
+    updateIntoDB
 };
