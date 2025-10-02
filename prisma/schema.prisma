@@ -180,7 +180,7 @@ model Schedule {
 model DoctorSchedules {
   doctorId String
   scheduleId String
-  isBooked Boolean
+  isBooked Boolean @default(false)
   appointmentId String?
   schedule Schedule @relation(fields: [scheduleId], references: [id])
   doctor   Doctor   @relation(fields: [doctorId], references: [id])

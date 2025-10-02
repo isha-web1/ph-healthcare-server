@@ -8,7 +8,7 @@ import httpStatus from "http-status";
 
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
     const result = await ScheduleService.insertIntoDB(req.body);
-    console.log(result);
+   
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
