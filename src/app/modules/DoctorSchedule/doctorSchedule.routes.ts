@@ -8,6 +8,13 @@ import { DoctorScheduleController } from "./doctorSchedule.controller";
 
 const router = express.Router();
 
+
+router.get(
+    '/my-schedule',
+    auth(UserRole.DOCTOR),
+    DoctorScheduleController.getMySchedule
+)
+
 router.post(
     '/',
     auth(UserRole.DOCTOR),
