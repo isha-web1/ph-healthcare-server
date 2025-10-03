@@ -13,6 +13,12 @@ router.get(
     ScheduleController.getAllFromDB
 );
 
+router.get(
+    '/:id',
+    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR),
+    ScheduleController.getByIdFromDB
+);
+
 
 router.post(
     '/',
@@ -20,6 +26,12 @@ router.post(
     ScheduleController.insertIntoDB
 );
 
+
+router.delete(
+    '/:id',
+    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+    ScheduleController.deleteFromDB
+);
 
 
 
