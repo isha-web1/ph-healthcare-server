@@ -10,6 +10,13 @@ const router = express.Router();
 
 
 router.get(
+    '/',
+    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+    DoctorScheduleController.getAllFromDB
+);
+
+
+router.get(
     '/my-schedule',
     auth(UserRole.DOCTOR),
     DoctorScheduleController.getMySchedule
