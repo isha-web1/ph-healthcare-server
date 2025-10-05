@@ -11,6 +11,13 @@ import { AppointmentController } from "./appointment.controller";
 const router = express.Router();
 
 
+router.get(
+    '/my-appointment',
+    auth(UserRole.PATIENT, UserRole.DOCTOR),
+    AppointmentController.getMyAppointment
+)
+
+
 router.post(
     '/',
     auth(UserRole.PATIENT),
