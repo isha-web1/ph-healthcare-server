@@ -29,6 +29,7 @@ model User {
   patient Patient?
 
 
+
   @@map("users")
 
 }
@@ -72,6 +73,7 @@ model Doctor {
    doctorSpecialties   DoctorSpecialties[]
   review              Review[]
   doctorSchedules    DoctorSchedules[]
+  appointment        Appointment[]
 
   @@map("doctors")
 }
@@ -93,6 +95,7 @@ model Patient {
   patientHealthData PatientHealthData?
   medicalReport    MedicalReport[]
   review            Review[]
+  appointment      Appointment[]
   
 
   @@map("patients")
@@ -171,6 +174,7 @@ model Schedule {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   doctorSchedules DoctorSchedules[]
+  appointment     Appointment?
   
 
   @@map("schedules")
@@ -184,12 +188,35 @@ model DoctorSchedules {
   appointmentId String? @unique
   schedule Schedule @relation(fields: [scheduleId], references: [id])
   doctor   Doctor   @relation(fields: [doctorId], references: [id])
+  appointment Appointment? @relation(fields: [appointmentId], references: [id])
 
   @@id([scheduleId, doctorId])
   @@map("doctor_schedules")
 }
 
+model Appointment {
+  id        String  @id @default(uuid())
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id])
 
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+
+  scheduleId String   @unique
+  schedule   Schedule @relation(fields: [scheduleId], references: [id])
+
+  videoCallingId  String
+  status          AppointmentStatus @default(SCHEDULED)
+  paymentStatus   PaymentStatus     @default(UNPAID)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  doctorSchedules DoctorSchedules?
+ 
+  
+  review          Review?
+
+  @@map("appointments")
+}
 
 
 model Review {
@@ -201,6 +228,9 @@ model Review {
   doctor   Doctor @relation(fields: [doctorId], references: [id])
 
   appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+
+  
  
 
   rating    Float
@@ -250,4 +280,20 @@ enum BloodGroup {
 enum MaritalStatus {
   MARRIED
   UNMARRIED
+}
+
+
+
+enum AppointmentStatus {
+  SCHEDULED
+  INPROGRESS
+  COMPLETED
+  CANCELED
+}
+
+
+
+enum PaymentStatus {
+  PAID
+  UNPAID
 }
