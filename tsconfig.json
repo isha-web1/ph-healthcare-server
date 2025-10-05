@@ -7,9 +7,9 @@
 
     // Environment Settings
     // *** KEY CHANGE 1: Use NodeNext for ES Modules in Node.js ***
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "target": "ES2022", // Updated for better compatibility with modern Node.js
+    "module": "commonjs",
+    
+    "target": "es2016", // Updated for better compatibility with modern Node.js
 
       "types": ["node"],
       "lib": ["esnext"],
