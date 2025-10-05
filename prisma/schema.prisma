@@ -74,6 +74,7 @@ model Doctor {
   review              Review[]
   doctorSchedules    DoctorSchedules[]
   appointment        Appointment[]
+  prescription      Prescription[]
 
   @@map("doctors")
 }
@@ -96,6 +97,7 @@ model Patient {
   medicalReport    MedicalReport[]
   review            Review[]
   appointment      Appointment[]
+  prescription     Prescription[]
   
 
   @@map("patients")
@@ -214,6 +216,7 @@ model Appointment {
   payment         Payment?
   
   review          Review?
+  prescription    Prescription?
 
   @@map("appointments")
 }
@@ -233,6 +236,27 @@ model Payment {
   updatedAt          DateTime      @updatedAt
 
   @@map("payments")
+}
+
+
+
+model Prescription {
+  id            String      @id @default(uuid())
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id])
+
+  instructions String
+  followUpDate DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("prescriptions")
 }
 
 
