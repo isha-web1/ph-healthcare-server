@@ -6,6 +6,7 @@ import { AppointmentService } from "./appointment.service";
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 import { appointmentFilterableFields } from "./appointment.constant";
+import ApiError from "../../errors/ApiError";
 
 
 
@@ -59,8 +60,29 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
 
 
 
+const changeAppointmentStatus = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    const user = req.user;
+
+    if (!id) {
+        throw new ApiError(httpStatus.BAD_REQUEST, "Appointment id is required");
+    }
+
+    const result = await AppointmentService.changeAppointmentStatus(id, status, user as IAuthUser);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Appointment status changed successfully',
+        data: result
+    });
+});
+
+
+
 export const AppointmentController = {
     createAppointment,
     getMyAppointment,
-    getAllFromDB
+    getAllFromDB,
+    changeAppointmentStatus
 }
