@@ -11,6 +11,7 @@ import { DoctorScheduleRoutes } from '../modules/DoctorSchedule/doctorSchedule.r
 import { AppointmentRoutes } from '../modules/Appointment/appointment.routes';
 import { PrescriptionRoutes } from '../modules/Prescription/prescription.routes';
 import { ReviewRoutes } from '../modules/Review/review.routes';
+import { PaymentRoutes } from '../modules/Payment/payment.routes';
 
 const router = express.Router();
 
@@ -51,6 +52,10 @@ const moduleRoutes = [
     {
         path : '/appointment',
         route : AppointmentRoutes
+    },
+    {
+        path : '/payment',
+        route : PaymentRoutes
     },
     {
         path : '/prescription',

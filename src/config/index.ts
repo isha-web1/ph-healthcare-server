@@ -19,5 +19,10 @@ export default {
     emailSender : {
         email: process.env.EMAIL,
         appPassword: process.env.APP_PASSWORD
+    },
+     ssl: {
+        storeId: process.env.STORE_ID,
+        storePass: process.env.STORE_PASS,
+        
     }
 };
