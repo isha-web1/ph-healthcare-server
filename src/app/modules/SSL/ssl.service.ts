@@ -43,7 +43,7 @@ const initPayment = async (paymentData: IPaymentData) => {
 
         const response = await axios({
             method: 'post',
-            url: config.ssl.sslPaymentApi,
+            url: config.ssl.sslPaymentApi!,
             data: data,
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         });
@@ -53,4 +53,15 @@ const initPayment = async (paymentData: IPaymentData) => {
     catch (err) {
         throw new ApiError(httpStatus.BAD_REQUEST, "Payment error occurred!")
     }
+};
+
+
+
+
+
+
+
+
+export const SSLService = {
+    initPayment
 };
