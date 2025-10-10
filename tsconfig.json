@@ -32,5 +32,11 @@
       "noUncheckedSideEffectImports": true,
       "moduleDetection": "force",
       "skipLibCheck": true,
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts", // Example: exclude test files
+    "prisma/seed.ts" // <-- ADD THIS LINE to specifically ignore the seed file
+  ]
 }
